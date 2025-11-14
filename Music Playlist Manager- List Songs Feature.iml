@@ -1,0 +1,150 @@
+import java.util.Scanner;
+
+class Song {
+    private String title;
+    private String artist;
+    private int duration; // in seconds
+    private String genre;
+
+    public Song(String title, String artist, int duration, String genre) {
+        this.title = title;
+        this.artist = artist;
+        this.duration = duration;
+        this.genre = genre;
+    }
+
+    // Getters
+    public String getTitle() { return title; }
+    public String getArtist() { return artist; }
+    public int getDuration() { return duration; }
+    public String getGenre() { return genre; }
+
+    // Displays one song in formatted columns
+    public void printSong() {
+        System.out.printf("%-20s %-20s %-10d %-10s\n",
+                title, artist, duration, genre);
+    }
+}
+
+class Playlist {
+    private Song[] songs;       // Fixed-size array
+    private int songCount;      // Number of songs added
+
+    public Playlist(int size) {
+        songs = new Song[size];
+        songCount = 0;
+    }
+
+    // ------------------ ADD SONG ------------------
+    public void addSong(String title, String artist, int duration, String genre) {
+        if (songCount >= songs.length) {
+            System.out.println("Playlist is full! Cannot add more songs.");
+            return;
+        }
+        songs[songCount] = new Song(title, artist, duration, genre);
+        songCount++;
+        System.out.println("Song added successfully!");
+    }
+
+    // ------------------ LIST SONGS ------------------
+    // ✅ YOUR PART
+    public void listSongs() {
+        System.out.println("\n--- Playlist Songs ---");
+        if (songCount == 0) {
+            System.out.println("No songs in the playlist yet.");
+            return;
+        }
+
+        System.out.printf("%-5s %-20s %-20s %-10s %-10s\n",
+                "No.", "Title", "Artist", "Duration", "Genre");
+        System.out.println("---------------------------------------------------------------");
+
+        for (int i = 0; i < songCount; i++) {
+            System.out.printf("%-5d", (i + 1));
+            songs[i].printSong();
+        }
+    }
+
+    // ------------------ SEARCH BY GENRE ------------------
+    public void searchByGenre(String genre) {
+        boolean found = false;
+        System.out.println("\nSongs in genre: " + genre);
+        for (int i = 0; i < songCount; i++) {
+            if (songs[i].getGenre().equalsIgnoreCase(genre)) {
+                songs[i].printSong();
+                found = true;
+            }
+        }
+        if (!found) {
+            System.out.println("No songs found in that genre.");
+        }
+    }
+
+    // ------------------ TOTAL DURATION ------------------
+    public void showTotalDuration() {
+        int total = 0;
+        for (int i = 0; i < songCount; i++) {
+            total += songs[i].getDuration();
+        }
+        System.out.println("Total playlist duration: " + total + " seconds");
+    }
+}
+
+public class MusicPlaylistManager {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Playlist playlist = new Playlist(10); // fixed size 10
+        int choice;
+
+        do {
+            System.out.println("\n===== MUSIC PLAYLIST MANAGER =====");
+            System.out.println("1. Add a new song");
+            System.out.println("2. List all songs");
+            System.out.println("3. Search songs by genre");
+            System.out.println("4. Show total playlist duration");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // clear input buffer
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter song title: ");
+                    String title = scanner.nextLine();
+                    System.out.print("Enter artist name: ");
+                    String artist = scanner.nextLine();
+                    System.out.print("Enter duration (in seconds): ");
+                    int duration = scanner.nextInt();
+                    scanner.nextLine(); // clear buffer
+                    System.out.print("Enter genre: ");
+                    String genre = scanner.nextLine();
+
+                    playlist.addSong(title, artist, duration, genre);
+                    break;
+
+                case 2:
+                    playlist.listSongs();
+                    break;
+
+                case 3:
+                    System.out.print("Enter genre to search: ");
+                    String searchGenre = scanner.nextLine();
+                    playlist.searchByGenre(searchGenre);
+                    break;
+
+                case 4:
+                    playlist.showTotalDuration();
+                    break;
+
+                case 5:
+                    System.out.println("Exiting program... Goodbye!");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice! Please try again.");
+            }
+        } while (choice != 5);
+
+        scanner.close();
+    }
+}
